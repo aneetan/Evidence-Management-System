@@ -14,8 +14,9 @@
   </div>
   <div class="container">
     <h2>Case Evidence Form</h2>
-    <form id="evidenceForm" enctype="multipart/form-data">
+    <form id="evidenceForm" action="{% url 'save_to_ipfs' %}" method="POST" enctype="multipart/form-data">
       <!-- Evidence Details Section -->
+      {% csrf_token %}
       
       <label for="name">Name of the Person:</label>
       <input type="text" id="name" name="name" required>
@@ -39,14 +40,14 @@
       <p id="error-message" style="color: red; display: none;">All fields must be filled, and evidence must be uploaded before submission!</p>
 
       <!-- Submit Button -->
-      <button type="button" id="submitBtn">Submit</button>
+      <button type="submit" id="submitBtn">Submit</button>
       
     </form>
   </div>
 
   <script src="{% static 'evidence/js/script.js' %}"></script>
   <script>
-    
+
   </script>
 
 </body>
