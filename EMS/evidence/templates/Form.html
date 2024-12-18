@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static%}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Evidence Form</title>
+  <link rel="stylesheet" href="{% static 'evidence/css/style.css' %}">
+</head>
+<body>
+  <!-- Page Title for Adding Evidence -->
+  <div>
+    <h1 class="page-title">Add Evidence</h1>
+  </div>
+  <div class="container">
+    <h2>Case Evidence Form</h2>
+    <form id="evidenceForm" enctype="multipart/form-data">
+      <p id="error-message" style="color: red; display: none;">All fields must be filled, and evidence must be uploaded before submission!</p>
+      <!-- Evidence Details Section -->
+      <label for="hashId">Hash ID:</label>
+      <input type="text" id="hashId" name="hashId" required>
+
+      <label for="address">Address (Hash):</label>
+      <input type="text" id="address" name="address" required>
+
+      <label for="name">Name of the Person:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required>
+
+      <label for="nationality">Nationality:</label>
+      <input type="text" id="nationality" name="nationality" required>
+
+      <label for="picture">Picture of the Person:</label>
+      <input type="file" id="picture" name="picture" accept="image/*" required>
+
+      <label for="nationalId">National ID Card Number:</label>
+      <input type="text" id="nationalId" name="nationalId" required>
+
+      <label for="crime">Crime:</label>
+      <input type="text" id="crime" name="crime" required>
+
+      <label for="description">Description of the Case:</label>
+      <textarea id="description" name="description" rows="4" required></textarea>
+
+      <label for="timestamp">Time Stamp:</label>
+      <input type="datetime-local" id="timestamp" name="timestamp" required>
+
+      <!-- Evidence Files Section -->
+      <label for="evidence">Upload Evidence (audio, video, pictures):</label>
+      <input type="file" id="evidence" name="evidence" multiple accept="image/*,audio/*,video/*" required>
+
+      <!-- Submit Button -->
+      <button type="button" id="submitBtn">Submit</button>
+      
+    </form>
+  </div>
+
+  <script src="{% static 'evidence/js/script.js' %}"></script>
+</body>
+</html>

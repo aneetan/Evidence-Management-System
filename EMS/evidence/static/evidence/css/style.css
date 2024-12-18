@@ -1,0 +1,133 @@
+/* General Reset to avoid unexpected styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  display: flex;
+  flex-direction: column; /* Ensure elements are stacked vertically */
+  align-items: center;   /* Center the content horizontally */
+  min-height: 100vh;     /* Ensure full height */
+  margin: 0;
+  padding: 20px;
+}
+
+/* Page Title Styling (Main Heading) */
+.page-title {
+  color:  #2C74B3; /* Ensure text is visible */
+  font-size: 2em; /* Adjust size as needed */
+  text-align: center; /* Center the text */
+  margin: 20px 0; /* Add spacing */
+}
+
+/* Container for the form */
+.container {
+  width: 100%;  /* Full width with a maximum limit */
+  max-width: 600px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;  /* Align content inside the form to the left */
+  color:rgb(116, 115, 115)
+}
+
+/* Subheading for the form */
+h2 {
+  font-size: 24px;
+  color: #48779f;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input field and text area styling */
+label {
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"],
+input[type="datetime-local"],
+textarea {
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 15px;
+  color:grey
+}
+
+/* File input styling (for upload fields) */
+input[type="file"] {
+  padding: 5px;
+  font-size: 14px;
+}
+
+/* Textarea styling */
+textarea {
+  font-size: 16px;
+}
+
+/* Submit Button Styling */
+button {
+  background-color: #2C74B3;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #5698de;
+}
+
+/* Error Message Styling */
+#error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* Responsive Layout for Smaller Screens */
+@media (max-width: 768px) {
+  .container {
+    width: 90%;  /* Slightly reduce the form width on smaller screens */
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="file"],
+  input[type="datetime-local"],
+  textarea {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
