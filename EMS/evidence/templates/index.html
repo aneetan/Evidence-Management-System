@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  {% load static%}
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Landing Page</title>
@@ -25,7 +26,7 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="../static/evidence/css/main.css" rel="stylesheet">
+  <link href="{% static 'evidence/css/main.css' %}" rel="stylesheet">
 
 </head>
 
@@ -101,7 +102,7 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
   <!-- Main JS File -->
-  <script src="../static/evidence/js/main.js"></script>
+  <script src="{% static 'evidence/css/main.js' %}></script>
 
 </body>
 </html>
