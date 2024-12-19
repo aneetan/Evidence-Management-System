@@ -7,15 +7,18 @@
   <title>Case Evidence Form</title>
   <link rel="stylesheet" href="{% static 'evidence/css/style.css' %}">
 </head>
+<style>
+  .container{
+    width: 50% !important;
+  } 
+</style>
 <body>
   {% include 'nav.html' %}
   
   <!-- Page Title for Adding Evidence -->
-  <div>
-    <h1 class="page-title">Add Evidence</h1>
-  </div>
-  <div class="container">
-    <h2>Case Evidence Form</h2>
+  
+  <div style="margin-top:100px;" class="container">
+    <h2 style="color: #4B89BE">Case Evidence Form</h2>
     <form id="evidenceForm" action="{% url 'save_to_ipfs' %}" method="POST" enctype="multipart/form-data">
       <!-- Evidence Details Section -->
       {% csrf_token %}
@@ -42,7 +45,7 @@
       <p id="error-message" style="color: red; display: none;">All fields must be filled, and evidence must be uploaded before submission!</p>
 
       <!-- Submit Button -->
-      <button type="submit" id="submitBtn">Submit</button>
+      <button style="background-color: #4B89BE" type="submit" id="submitBtn">Submit</button>
       
     </form>
   </div>
