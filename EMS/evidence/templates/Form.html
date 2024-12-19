@@ -52,6 +52,12 @@
 
   {% include 'footer.html' %}
 
+  {% if alert_message %}
+    <script>
+        alert("{{ alert_message|escapejs }}");
+    </script>
+  {% endif %}
+
 
   <script src="{% static 'evidence/js/script.js' %}"></script>
   <script>

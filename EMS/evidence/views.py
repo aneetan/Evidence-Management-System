@@ -1,8 +1,9 @@
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
+from django.contrib import messages
 
 
 def home(request):
@@ -36,7 +37,7 @@ def save_to_ipfs(request):
             "evidence_files": evidence_data,
         }
 
-        # Save data to IPFS (using Pinata in this example)
+        # Save data to IPFS using Pinata
         try:
             url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
             headers = {
@@ -47,13 +48,19 @@ def save_to_ipfs(request):
 
             if response.status_code == 200:
                 ipfs_hash = response.json()["IpfsHash"]
-                return JsonResponse({"success": True, "ipfs_hash": ipfs_hash})
+                return render(request, "index.html", {
+                    "alert_message": f"Evidence added successfully! IPFS Hash: {ipfs_hash}"
+                })
             else:
-                return JsonResponse({"success": False, "error": response.text}, status=400)
+                return render(request, "Form.html", {
+                    "alert_message": f"Failed to save evidence: {response.text}"
+                })
         except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+            return render(request, "Form.html", {
+                "alert_message": f"An error occurred: {str(e)}"
+            }) 
 
-    return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
+    return render(request, "Form.html")
 
 
 
