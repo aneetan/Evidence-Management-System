@@ -5,8 +5,14 @@ from django.http import JsonResponse
 from django.conf import settings
 
 
-def formLoad(request):
+def home(request):
     return render(request, 'index.html')
+
+def add(request):
+    return render(request, 'Form.html')
+
+def view(request):
+    return render(request, 'view.html')
 
 @csrf_exempt
 def save_to_ipfs(request):
