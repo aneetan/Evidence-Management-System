@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 def formLoad(request):
-    return render(request, 'form.html')
+    return render(request, 'index.html')
 
 @csrf_exempt
 def save_to_ipfs(request):
