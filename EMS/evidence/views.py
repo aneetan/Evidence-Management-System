@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
 from django.contrib import messages
+from web3 import Web3
 
 
 def home(request):
@@ -14,6 +15,10 @@ def add(request):
 
 def view(request):
     return render(request, 'view.html')
+
+def save_to_blockchain(ipfs_hash, case_id):
+    
+
 
 @csrf_exempt
 def save_to_ipfs(request):

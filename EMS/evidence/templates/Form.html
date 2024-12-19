@@ -22,6 +22,9 @@
     <form id="evidenceForm" action="{% url 'save_to_ipfs' %}" method="POST" enctype="multipart/form-data">
       <!-- Evidence Details Section -->
       {% csrf_token %}
+
+      <p id="error-message" style="color: red; display: none;">All fields must be filled, and evidence must be uploaded before submission!</p>
+
       
       <label for="name">Name of the Person:</label>
       <input type="text" id="name" name="name" required>
@@ -41,8 +44,6 @@
       <!-- Evidence Files Section -->
       <label for="evidence">Upload Evidence (audio, video, pictures):</label>
       <input type="file" id="evidence" name="evidence" multiple accept="image/*,audio/*,video/*" required>
-
-      <p id="error-message" style="color: red; display: none;">All fields must be filled, and evidence must be uploaded before submission!</p>
 
       <!-- Submit Button -->
       <button style="background-color: #4B89BE" type="submit" id="submitBtn">Submit</button>
