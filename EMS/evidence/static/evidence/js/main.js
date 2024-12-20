@@ -30,6 +30,12 @@
       mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
     }
   
+
+    // document.querySelector('.mobile-nav-toggle').addEventListener('click', function() {
+    //   const navMenu = document.getElementById('navmenu');
+    //   navMenu.classList.toggle('d-none');
+    // });
+    
     /**
      * Hide mobile nav on same-page/hash links
      */
@@ -87,27 +93,9 @@
       });
     }
     window.addEventListener('load', aosInit);
+ 
+ 
   
-    /**
-     * Initiate glightbox
-     */
-    const glightbox = GLightbox({
-      selector: '.glightbox'
-    });
-  
-    /**
-     * Initiate Pure Counter
-     */
-    new PureCounter();
-  
-    /**
-     * Frequently Asked Questions Toggle
-     */
-    document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
-      faqItem.addEventListener('click', () => {
-        faqItem.parentNode.classList.toggle('faq-active');
-      });
-    });
   
     /**
      * Init isotope layout and filters

@@ -1,7 +1,8 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
 
 :root {
-    --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --heading-font: "Nunito",  sans-serif;
+    --default-font: "Poppins", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --heading-font: "Poppins",  sans-serif;
     --nav-font: "Poppins",  sans-serif;
   }
   
@@ -10,7 +11,7 @@
     --background-color: #ffffff; /* Background color for the entire website, including individual sections */
     --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
     --heading-color: #012970; /* Color for headings, subheadings and title throughout the website */
-    --accent-color: #2C74B3; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+    --accent-color: #4B89BE; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
     --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
     --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
   }
@@ -18,7 +19,7 @@
   /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
   :root {
     --nav-color: #354699;  /* The default color of the main navmenu links */
-    --nav-hover-color: #558bff; /* Applied to main navmenu links when they are hovered over or active */
+    --nav-hover-color: #095fa9; /* Applied to main navmenu links when they are hovered over or active */
     --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
     
   }
@@ -49,7 +50,7 @@
   body {
     color: var(--default-color);
     background-color: var(--background-color);
-    font-family: var(--default-font);
+    font-family: "Poppins", sans-serif;
   }
   
   a {
@@ -150,7 +151,7 @@
     font-size: 30px;
     margin: 0;
     font-weight: 700;
-    color:#2C74B3;
+    color:#4B89BE;
   }
   
   .header .btn-getstarted,
@@ -226,7 +227,7 @@
   
     .navmenu a,
     .navmenu a:focus {
-      color: #2C74B3;
+      color: #4B89BE;
       padding: 18px 12px;
       font-size: 16px;
       font-family: var(--nav-font);

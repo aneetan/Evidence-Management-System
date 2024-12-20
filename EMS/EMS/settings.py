@@ -19,10 +19,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 PINATA_JWT_TOKEN = os.getenv("PINATA_JWT_TOKEN")
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+INFURA_ID = os.getenv("INFURA_ID")
+CONTRACT_ADDRESS= os.getenv("CONTRACT_ADDRESS")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-tfm(%%)ea!go%k2g#!pr=8_f0s#uqbl(+s9t(v30-k&fkiomr3'
@@ -60,7 +58,7 @@ ROOT_URLCONF = 'EMS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,7 +119,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",

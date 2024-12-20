@@ -1,18 +1,58 @@
 import requests
-from django.shortcuts import render
+import os
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
+from django.contrib import messages
+from web3 import Web3
+from dotenv import load_dotenv
+from datetime import datetime
+from django.http import JsonResponse
 
+load_dotenv()
 
-def formLoad(request):
-    return render(request, 'form.html')
+WEB3_PROVIDER = "https://mainnet.infura.io/v3/2c97cd49958246ea81484b7873bf1bc6"  
+# CONTRACT_ADDRESS = {settings.CONTRACT_ADDRESS}
+CONTRACT_ABI = [
+    {
+        "inputs": [
+            {"internalType": "string", "name": "_ipfsHash", "type": "string"},
+            {"internalType": "address", "name": "_walletAddress", "type": "address"},
+            {"internalType": "uint256", "name": "_timestamp", "type": "uint256"}
+        ],
+        "name": "saveEvidence",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "evidenceCount",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
+web3 = Web3(Web3.HTTPProvider(WEB3_PROVIDER))
+# contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
+
+def home(request):
+    return render(request, 'index.html')
+
+def add(request):
+    return render(request, 'Form.html')
+
+def view(request):
+    return render(request, 'view.html')
 
 @csrf_exempt
 def save_to_ipfs(request):
     if request.method == "POST":
         # Extract form data
         form_data = request.POST.dict()
+        wallet_address = form_data.get("wallet_address")
         files = request.FILES.getlist('evidence')
 
         # Process uploaded files (optional)
@@ -30,7 +70,7 @@ def save_to_ipfs(request):
             "evidence_files": evidence_data,
         }
 
-        # Save data to IPFS (using Pinata in this example)
+        # Save data to IPFS using Pinata
         try:
             url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
             headers = {
@@ -41,13 +81,21 @@ def save_to_ipfs(request):
 
             if response.status_code == 200:
                 ipfs_hash = response.json()["IpfsHash"]
-                return JsonResponse({"success": True, "ipfs_hash": ipfs_hash})
+                return JsonResponse({'ipfs_hash': ipfs_hash})
+            
             else:
-                return JsonResponse({"success": False, "error": response.text}, status=400)
+                return render(request, "Form.html", {
+                    "alert_message": f"Failed to save evidence: {response.text}"
+                })
         except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+            return render(request, "Form.html", {
+                "alert_message": f"An error occurred: {str(e)}"
+            }) 
 
-    return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
+    return render(request, "Form.html")
 
 
-
+# def verify_transaction(request):
+#     # Get the transaction hash from the frontend (MetaMask)
+#     transaction_hash = request.POST.get('transaction_hash')
+#     return transaction_hash

@@ -34,44 +34,18 @@
 
 <body class="index-page">
 
-  {% include 'nav.html' %}
 
-  <main class="main">
-
-    <!-- Hero Section -->
-    <section id="hero" class="hero section">
-
-      <div class="container">
-        <div class="row gy-4">
-          <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-            <h1>"Securing Justice, One Block at a Time."</h1>
-            <p> A cutting-edge blockchain technology to ensure the integrity, transparency, and security of evidence in criminal cases. From collection to courtroom, we provide a tamper-proof solution that empowers justice and protects truth.</p>
-            <div class="d-flex flex-column flex-md-row">
-              <a href="javascript:void(0);" class="btn-get-started" onclick="loginWithWallet()">Get Started<i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-          <div class="col-lg-6 order-1 order-lg-2 hero-img">
-            <img src="{% static 'evidence/img/hero-img.png' %}" class="img-fluid animated" alt="">
-          </div>
-        </div>
+    <div class="copyright text-center mt-4">
+      <p>© <span>Copyright 2024</span> <strong class="px-1 sitename">-</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        
       </div>
-
-    </section><!-- /Hero Section -->
-  </main>
-
-  {% include 'footer.html' %}
-
-
+    </div>
 
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  {% if alert_message %}
-    <script>
-        alert("{{ alert_message|escapejs }}");
-    </script>
-  {% endif %}
   <!-- Vendor JS Files -->
 
   <script src="{% static 'evidence/css/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
