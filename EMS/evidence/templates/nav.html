@@ -33,20 +33,16 @@
   <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
 
   <style>
-    /* Style for the user ID in the navbar */
     #walletInfo .wallet-address {
       font-weight: bold;
       color: #2C74B3;
-      margin-left: 30px; /* This will move the user ID to the right */
-      margin-right: 20px; /* Adds spacing to the right of the address */
+      margin-left: 30px;
+      margin-right: 20px;
     }
-
-    /* Adjust navbar items to ensure there is space for the address */
     #navmenu ul {
       display: flex;
-      gap: 20px; /* Adds space between navbar items */
+      gap: 20px;
     }
-
     #navmenu li {
       list-style: none;
     }
@@ -97,6 +93,22 @@
         isWalletConnected = true;
         displayWalletAddress(savedWalletAddress);
       }
+
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+          if (accounts.length > 0) {
+            const newAddress = accounts[0];
+            isWalletConnected = true;
+            localStorage.setItem('walletAddress', newAddress);
+            displayWalletAddress(newAddress);
+          } else {
+            isWalletConnected = false;
+            localStorage.removeItem('walletAddress');
+            resetWalletInfo();
+            alert("Wallet disconnected. Please reconnect.");
+          }
+        });
+      }
     });
 
     async function loginWithWallet() {
@@ -134,6 +146,11 @@
       const displayAddress = `${firstFive}${hiddenMiddle}${lastFive}`;
       const walletInfoDiv = document.getElementById('walletInfo');
       walletInfoDiv.innerHTML = `<span class="wallet-address">User ID: ${displayAddress}</span>`;
+    }
+
+    function resetWalletInfo() {
+      const walletInfoDiv = document.getElementById('walletInfo');
+      walletInfoDiv.innerHTML = `<button id="loginWallet" class="btn-getstarted flex-md-shrink-0" onclick="loginWithWallet()">Login with Wallet</button>`;
     }
 
     function checkWallet(event) {
