@@ -62,9 +62,16 @@
   {% include 'footer.html' %}
 
 
+
+
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  {% if alert_message %}
+    <script>
+        alert("{{ alert_message|escapejs }}");
+    </script>
+  {% endif %}
   <!-- Vendor JS Files -->
 
   <script src="{% static 'evidence/css/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
