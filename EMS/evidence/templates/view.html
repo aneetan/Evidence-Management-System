@@ -33,6 +33,69 @@
   </div>
   {% include 'footer.html' %}
 
+  <script>
+    async function getTransactionDetails(txHash) {
+      try {
+          // Ensure web3 is initialized and connected to the correct network
+          const web3 = new Web3(window.ethereum);
+  
+          // Get the transaction receipt using the transaction hash
+          const receipt = await web3.eth.getTransactionReceipt(txHash);
+  
+          if (receipt && receipt.logs) {
+              // Find the event log (replace with the correct event signature)
+              const eventSignature = web3.utils.sha3("EvidenceStored(string,address,uint256)");
+  
+              // Filter logs to get the EvidenceStored event
+              const eventLog = receipt.logs.find(log => log.topics[0] === eventSignature);
+  
+              if (eventLog) {
+                  // Decode the event data (assuming the event parameters are IPFS hash, sender address, and timestamp)
+                  const decodedData = web3.eth.abi.decodeLog(
+                      [
+                          { type: 'string', name: 'ipfsHash' },
+                          { type: 'address', name: 'sender' },
+                          { type: 'uint256', name: 'timestamp' }
+                      ],
+                      eventLog.data,
+                      eventLog.topics.slice(1) // The topics[0] is the event signature, the remaining are the indexed parameters
+                  );
+  
+                  const ipfsHash = decodedData.ipfsHash;
+                  const senderAddress = decodedData.sender;
+                  const timestamp = decodedData.timestamp;
+  
+                  // Display the details in the UI or log them to the console
+                  alert(`Evidence saved! IPFS Hash: ${ipfsHash}\nSender Address: ${senderAddress}\nTimestamp: ${timestamp}`);
+              } else {
+                  alert("Event not found in the transaction logs.");
+              }
+          } else {
+              alert("Transaction receipt not found.");
+          }
+      } catch (error) {
+          alert(`Error fetching transaction details: ${error.message}`);
+      }
+  }
+
+  document.getElementById('search-btn').addEventListener('click', async function() {
+    const txHash = document.getElementById('search-bar').value.trim(); // Get the TX hash from the input field
+    
+    // Check if the transaction hash is entered
+    if (!txHash) {
+        alert("Please enter a valid transaction hash.");
+        return;
+    }
+
+  getTransactionDetails(txHash);
+
+
+     
+});
+  
+  
+  </script>
+
   
 </body>
 </html>
