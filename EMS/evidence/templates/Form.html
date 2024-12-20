@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Case Evidence Form</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.1/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
   <link rel="stylesheet" href="{% static 'evidence/css/style.css' %}">
 </head>
 <style>
@@ -19,7 +23,7 @@
   
   <div style="margin-top:100px;" class="container">
     <h2 style="color: #4B89BE">Case Evidence Form</h2>
-    <form id="evidenceForm" action="{% url 'save_to_ipfs' %}" method="POST" enctype="multipart/form-data">
+    <form id="evidenceForm" method="POST" enctype="multipart/form-data">
       <!-- Evidence Details Section -->
       {% csrf_token %}
 
@@ -46,7 +50,8 @@
       <input type="file" id="evidence" name="evidence" multiple accept="image/*,audio/*,video/*" required>
 
       <!-- Submit Button -->
-      <button style="background-color: #4B89BE" type="submit" id="submitBtn">Submit</button>
+      <button type="button" id="connectButton">Connect to MetaMask</button>
+      <button style="background-color: #4B89BE" type="submit" id="submitButton" .disabled>Submit</button>
       
     </form>
   </div>
@@ -62,7 +67,172 @@
 
   <script src="{% static 'evidence/js/script.js' %}"></script>
   <script>
+    let web3;
 
+    // Check if MetaMask is installed
+    if (typeof window.ethereum !== 'undefined') {
+      web3 = new Web3(window.ethereum);
+    } else {
+      alert('MetaMask is not installed!');
+    }
+
+    // Connect to MetaMask
+    document.getElementById('connectButton').addEventListener('click', async () => {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        document.getElementById('submitButton').disabled = false;
+        alert('MetaMask connected!');
+      } catch (error) {
+        console.error('Error connecting to MetaMask:', error);
+      }
+    });
+
+    apiKey="19c43ccdfcd3d5ff63b5"
+
+    // Handle form submission
+    document.getElementById('evidenceForm').addEventListener('submit', async (event) => {
+      event.preventDefault(); // Prevent the default form submission
+
+      const name = document.getElementById('name').value;
+      const crime = document.getElementById('crime').value;
+      const nationality = document.getElementById('nationality').value;
+      const nationalId = document.getElementById('nationalId').value;
+      const description = document.getElementById('description').value;
+      const evidence = document.getElementById('evidence').files;
+
+      if (evidence.length === 0) {
+        alert('Please upload evidence files.');
+        return;
+      }
+
+      try {
+        const accounts = await web3.eth.getAccounts();
+        const senderAddress = accounts[0];
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        
+
+        // Send transaction to the blockchain
+        const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748'; 
+        const contractABI = [
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "hashID",
+                "type": "string"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timeStamp",
+                "type": "uint256"
+              }
+            ],
+            "name": "HashStored",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "hashID",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "timeStamp",
+                "type": "uint256"
+              }
+            ],
+            "name": "storeHash",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "hashID",
+                "type": "string"
+              }
+            ],
+            "name": "getHashDetails",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "name": "hashRecords",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "hashID",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "timeStamp",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ];
+
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        await contract.methods.storeHash('12345rfvbnjy54323456',senderAddress, timestamp).send({ from: senderAddress });
+
+        alert('Evidence data saved to blockchain successfully!');
+      } catch (error) {
+        console.error('Error processing the submission:', error);
+        alert('Failed to submit evidence. Check the console for more details.');
+      }
+    });
   </script>
 
 </body>

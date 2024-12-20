@@ -7,9 +7,36 @@ from django.conf import settings
 from django.contrib import messages
 from web3 import Web3
 from dotenv import load_dotenv
+from datetime import datetime
+from django.http import JsonResponse
 
 load_dotenv()
 
+WEB3_PROVIDER = "https://mainnet.infura.io/v3/2c97cd49958246ea81484b7873bf1bc6"  
+# CONTRACT_ADDRESS = {settings.CONTRACT_ADDRESS}
+CONTRACT_ABI = [
+    {
+        "inputs": [
+            {"internalType": "string", "name": "_ipfsHash", "type": "string"},
+            {"internalType": "address", "name": "_walletAddress", "type": "address"},
+            {"internalType": "uint256", "name": "_timestamp", "type": "uint256"}
+        ],
+        "name": "saveEvidence",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "evidenceCount",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
+web3 = Web3(Web3.HTTPProvider(WEB3_PROVIDER))
+# contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 
 def home(request):
     return render(request, 'index.html')
@@ -20,129 +47,12 @@ def add(request):
 def view(request):
     return render(request, 'view.html')
 
-def save_to_blockchain(ipfs_hash, case_id):
-    #Connect to blockchain
-    ganache_url = "http://127.0.0.1:7545"
-    w3 = Web3(Web3.HTTPProvider(ganache_url))
-
-    if not w3.is_connected():
-        raise Exception("Failed to connect to blockchain")
-    
-    # 2. Contract ABI and Address
-    contract_address = Web3.to_checksum_address(os.getenv("CONTRACT_ADDRESS"))
-    contract_abi = [
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "hashID",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timeStamp",
-				"type": "uint256"
-			}
-		],
-		"name": "HashStored",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_hashID",
-				"type": "string"
-			}
-		],
-		"name": "storeHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_hashID",
-				"type": "string"
-			}
-		],
-		"name": "getHashDetails",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "hashRecords",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "hashID",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timeStamp",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-    ]
-
-    # 3. Initialize Contract
-    contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-
-    
-
-    
-
-
-
 @csrf_exempt
 def save_to_ipfs(request):
     if request.method == "POST":
         # Extract form data
         form_data = request.POST.dict()
+        wallet_address = form_data.get("wallet_address")
         files = request.FILES.getlist('evidence')
 
         # Process uploaded files (optional)
@@ -171,9 +81,8 @@ def save_to_ipfs(request):
 
             if response.status_code == 200:
                 ipfs_hash = response.json()["IpfsHash"]
-                return render(request, "index.html", {
-                    "alert_message": f"Evidence added successfully! IPFS Hash: {ipfs_hash}"
-                })
+                return JsonResponse({'ipfs_hash': ipfs_hash})
+            
             else:
                 return render(request, "Form.html", {
                     "alert_message": f"Failed to save evidence: {response.text}"
@@ -186,4 +95,7 @@ def save_to_ipfs(request):
     return render(request, "Form.html")
 
 
-
+# def verify_transaction(request):
+#     # Get the transaction hash from the frontend (MetaMask)
+#     transaction_hash = request.POST.get('transaction_hash')
+#     return transaction_hash
