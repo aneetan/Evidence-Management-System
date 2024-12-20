@@ -18,6 +18,8 @@
 </style>
 <body>
   {% include 'nav.html' %}
+
+  
   
   <!-- Page Title for Adding Evidence -->
   
@@ -69,6 +71,8 @@
   <script>
     let web3;
 
+    const form = document.getElementById("evidenceForm");
+
     // Check if MetaMask is installed
     if (typeof window.ethereum !== 'undefined') {
       web3 = new Web3(window.ethereum);
@@ -87,152 +91,165 @@
       }
     });
 
-    apiKey="19c43ccdfcd3d5ff63b5"
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault(); 
 
-    // Handle form submission
-    document.getElementById('evidenceForm').addEventListener('submit', async (event) => {
-      event.preventDefault(); // Prevent the default form submission
-
-      const name = document.getElementById('name').value;
-      const crime = document.getElementById('crime').value;
-      const nationality = document.getElementById('nationality').value;
-      const nationalId = document.getElementById('nationalId').value;
-      const description = document.getElementById('description').value;
-      const evidence = document.getElementById('evidence').files;
-
-      if (evidence.length === 0) {
-        alert('Please upload evidence files.');
-        return;
-      }
+      const formData = new FormData(form);
 
       try {
-        const accounts = await web3.eth.getAccounts();
-        const senderAddress = accounts[0];
-        const timestamp = Math.floor(Date.now() / 1000);
+          // Send the data to Django using Fetch
+          const response = await fetch('/save-to-ipfs/', {
+              method: 'POST',
+              body: formData,
+          });
 
-        
+          if (response.ok) {
+              const data = await response.json();
+              const ipfsHash = data.ipfs_hash;  // Extract the IPFS hash from the response
+              console.log("IPFS Hash:", ipfsHash);
 
-        // Send transaction to the blockchain
-        const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748'; 
-        const contractABI = [
-          {
-            "anonymous": false,
-            "inputs": [
-              {
-                "indexed": false,
-                "internalType": "string",
-                "name": "hashID",
-                "type": "string"
-              },
-              {
-                "indexed": true,
-                "internalType": "address",
-                "name": "userAddress",
-                "type": "address"
-              },
-              {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "timeStamp",
-                "type": "uint256"
+              try {
+                const accounts = await web3.eth.getAccounts();
+                const senderAddress = accounts[0];
+                const timestamp = Math.floor(Date.now() / 1000);
+            
+                // Send transaction to the blockchain
+                const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748'; 
+                const contractABI = [
+                  {
+                    "anonymous": false,
+                    "inputs": [
+                      {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "hashID",
+                        "type": "string"
+                      },
+                      {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "userAddress",
+                        "type": "address"
+                      },
+                      {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "timeStamp",
+                        "type": "uint256"
+                      }
+                    ],
+                    "name": "HashStored",
+                    "type": "event"
+                  },
+                  {
+                    "inputs": [
+                      {
+                        "internalType": "string",
+                        "name": "hashID",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "userAddress",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "uint256",
+                        "name": "timeStamp",
+                        "type": "uint256"
+                      }
+                    ],
+                    "name": "storeHash",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                  },
+                  {
+                    "inputs": [
+                      {
+                        "internalType": "string",
+                        "name": "hashID",
+                        "type": "string"
+                      }
+                    ],
+                    "name": "getHashDetails",
+                    "outputs": [
+                      {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                      }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                  },
+                  {
+                    "inputs": [
+                      {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                      }
+                    ],
+                    "name": "hashRecords",
+                    "outputs": [
+                      {
+                        "internalType": "string",
+                        "name": "hashID",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "userAddress",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "uint256",
+                        "name": "timeStamp",
+                        "type": "uint256"
+                      }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                  }
+                ];
+            
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+            
+                const tx = await contract.methods.storeHash(ipfsHash,senderAddress, timestamp).send({ from: senderAddress });
+
+                const txHash = tx.transactionHash;
+                alert(`Transaction successful! Transaction Hash: ${txHash}`);
+            
+              } catch (error) {
+                console.error('Error processing the submission:', error);
+                alert('Failed to submit evidence. Check the console for more details.');
               }
-            ],
-            "name": "HashStored",
-            "type": "event"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "string",
-                "name": "hashID",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "userAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "timeStamp",
-                "type": "uint256"
-              }
-            ],
-            "name": "storeHash",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "string",
-                "name": "hashID",
-                "type": "string"
-              }
-            ],
-            "name": "getHashDetails",
-            "outputs": [
-              {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-              }
-            ],
-            "name": "hashRecords",
-            "outputs": [
-              {
-                "internalType": "string",
-                "name": "hashID",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "userAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "timeStamp",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
+
+          } else {
+              const errorMessage = await response.text();
+              alert(`Failed to save evidence: ${errorMessage}`);
           }
-        ];
-
-        const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-        await contract.methods.storeHash('12345rfvbnjy54323456',senderAddress, timestamp).send({ from: senderAddress });
-
-        alert('Evidence data saved to blockchain successfully!');
       } catch (error) {
-        console.error('Error processing the submission:', error);
-        alert('Failed to submit evidence. Check the console for more details.');
+          alert(`An error occurred: ${error.message}`);
       }
-    });
+
+      
+
+
+
+  });
+
   </script>
 
 </body>
