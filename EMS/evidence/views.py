@@ -73,10 +73,9 @@ def save_to_ipfs(request):
     if request.method == "POST":
         # Extract form data
         form_data = request.POST.dict()
-        wallet_address = form_data.get("wallet_address")
         files = request.FILES.getlist('evidence')
 
-        upload_dir = os.path.join(settings.BASE_DIR, 'uploaded_files') 
+        upload_dir = os.path.join(settings.BASE_DIR, 'media') 
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
         
@@ -132,7 +131,7 @@ def process_ipfs(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)  
-            ipfs_hash = data.get('ipfsHash')
+            ipfs_hash = data.get('ipfsHash', '')
             
             ipfs_data = get_data_from_ipfs(ipfs_hash)
             print(ipfs_data)
