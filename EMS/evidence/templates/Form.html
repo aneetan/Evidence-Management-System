@@ -252,10 +252,11 @@
             
                 const contract = new web3.eth.Contract(contractABI, contractAddress);
             
-                const tx = await contract.methods.storeHash(ipfsHash,senderAddress, timestamp).send({ from: senderAddress });
+                const tx = await contract.methods.storeHash(ipfsHash).send({ from: senderAddress });
+                const hashId = tx.events.HashStored.returnValues[0]; 
 
                 const txHash = tx.transactionHash;
-                alert(`Transaction successful! Transaction Hash: ${txHash}`);
+                alert(`Transaction successful! Transaction Hash: ${txHash},  Hash ID: ${hashId}`);
             
               } catch (error) {
                 console.error('Error processing the submission:', error);
