@@ -39,14 +39,19 @@
     // Import Web3.js
 const Web3 = require('web3');
 
-const web3 = new Web3(window.ethereum); // In the browser (MetaMask) or Infura for Node.js
+const web3 = new Web3(window.ethereum); 
 
 // Your contract's ABI and address (replace with actual values)
-const contractABI = [
-  // ABI from the compiled contract
+const contractABI =  [
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "uniqueID",
+        "type": "bytes32"
+      },
       {
         "indexed": false,
         "internalType": "string",
@@ -75,29 +80,25 @@ const contractABI = [
         "internalType": "string",
         "name": "hashID",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "userAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timeStamp",
-        "type": "uint256"
       }
     ],
     "name": "storeHash",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "hashID",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "uniqueID",
+        "type": "bytes32"
       }
     ],
     "name": "getHashDetails",
@@ -124,9 +125,9 @@ const contractABI = [
   {
     "inputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "",
-        "type": "string"
+        "type": "bytes32"
       }
     ],
     "name": "hashRecords",
@@ -149,11 +150,23 @@ const contractABI = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "idCounter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
-  // Include other ABI elements if necessary
-];
+]
 
-const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748';  // Replace with your deployed contract address
+const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d';  // Replace with your deployed contract address
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
