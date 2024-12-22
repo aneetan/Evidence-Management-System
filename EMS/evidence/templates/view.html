@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Evidence Search</title>
   <link rel="stylesheet" href="{% static 'evidence/css/View.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 </head>
 <body>
   {% include 'nav.html' %}
@@ -34,64 +35,163 @@
   {% include 'footer.html' %}
 
   <script>
-    async function getTransactionDetails(txHash) {
-      try {
-          // Ensure web3 is initialized and connected to the correct network
-          const web3 = new Web3(window.ethereum);
-  
-          // Get the transaction receipt using the transaction hash
-          const receipt = await web3.eth.getTransactionReceipt(txHash);
-  
-          if (receipt && receipt.logs) {
-              // Find the event log (replace with the correct event signature)
-              const eventSignature = web3.utils.sha3("EvidenceStored(string,address,uint256)");
-  
-              // Filter logs to get the EvidenceStored event
-              const eventLog = receipt.logs.find(log => log.topics[0] === eventSignature);
-  
-              if (eventLog) {
-                  // Decode the event data (assuming the event parameters are IPFS hash, sender address, and timestamp)
-                  const decodedData = web3.eth.abi.decodeLog(
-                      [
-                          { type: 'string', name: 'ipfsHash' },
-                          { type: 'address', name: 'sender' },
-                          { type: 'uint256', name: 'timestamp' }
-                      ],
-                      eventLog.data,
-                      eventLog.topics.slice(1) // The topics[0] is the event signature, the remaining are the indexed parameters
-                  );
-  
-                  const ipfsHash = decodedData.ipfsHash;
-                  const senderAddress = decodedData.sender;
-                  const timestamp = decodedData.timestamp;
-  
-                  // Display the details in the UI or log them to the console
-                  alert(`Evidence saved! IPFS Hash: ${ipfsHash}\nSender Address: ${senderAddress}\nTimestamp: ${timestamp}`);
-              } else {
-                  alert("Event not found in the transaction logs.");
-              }
-          } else {
-              alert("Transaction receipt not found.");
-          }
-      } catch (error) {
-          alert(`Error fetching transaction details: ${error.message}`);
-      }
-  }
 
-  document.getElementById('search-btn').addEventListener('click', async function() {
-    const txHash = document.getElementById('search-bar').value.trim(); // Get the TX hash from the input field
+    // Import Web3.js
+const Web3 = require('web3');
+
+const web3 = new Web3(window.ethereum); // In the browser (MetaMask) or Infura for Node.js
+
+// Your contract's ABI and address (replace with actual values)
+const contractABI = [
+  // ABI from the compiled contract
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "hashID",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timeStamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "HashStored",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "hashID",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timeStamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "storeHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "hashID",
+        "type": "string"
+      }
+    ],
+    "name": "getHashDetails",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "hashRecords",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "hashID",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timeStamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+  // Include other ABI elements if necessary
+];
+
+const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748';  // Replace with your deployed contract address
+
+// Create contract instance
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+// Function to retrieve IPFS hash
+async function getIPFSHash(hashID) {
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // Call the getHashDetails method from the smart contract
+        const result = await contract.methods.getHashDetails(hashID).call({ from: accounts[0] });
+
+        // The first item in result is the IPFS hash
+        const ipfsHash = result[0];
+        console.log("IPFS Hash: ", ipfsHash);
+
+        return ipfsHash;
+    } catch (error) {
+        console.error("Error retrieving IPFS hash:", error);
+    }
+}
+
+/ Handle the search button click
+document.getElementById('search-btn').addEventListener('click', async () => {
+    const hashID = document.getElementById('search-bar').value;
     
-    // Check if the transaction hash is entered
-    if (!txHash) {
-        alert("Please enter a valid transaction hash.");
+    if (!hashID) {
+        alert("Please enter a Hash ID");
         return;
     }
 
-  getTransactionDetails(txHash);
+    // Get evidence data from the contract and IPFS
+    const evidence = await getIPFSHash(hashID);
 
-
-     
+    console.log(evidence);
 });
+
+
   
   
   </script>

@@ -79,16 +79,28 @@
       alert('MetaMask is not installed!');
     }
 
-    // Connect to MetaMask
-    document.getElementById('connectButton').addEventListener('click', async () => {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        document.getElementById('submitButton').disabled = false;
-        alert('MetaMask connected!');
-      } catch (error) {
-        console.error('Error connecting to MetaMask:', error);
+    // Check if the wallet is already connected on page load
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          
+          // If there is at least one account, enable the submit button
+          if (accounts.length > 0) {
+            document.getElementById('submitButton').disabled = false;
+            alert('MetaMask is already connected!');
+          } else {
+            alert('MetaMask is not connected. Please connect your wallet.');
+          }
+        } catch (error) {
+          console.error('Error checking accounts:', error);
+        }
+      } else {
+        console.error('MetaMask is not installed');
       }
     });
+
+
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault(); 
@@ -113,11 +125,17 @@
                 const timestamp = Math.floor(Date.now() / 1000);
             
                 // Send transaction to the blockchain
-                const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748'; 
+                const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d'; 
                 const contractABI = [
                   {
                     "anonymous": false,
                     "inputs": [
+                      {
+                        "indexed": false,
+                        "internalType": "bytes32",
+                        "name": "uniqueID",
+                        "type": "bytes32"
+                      },
                       {
                         "indexed": false,
                         "internalType": "string",
@@ -146,29 +164,25 @@
                         "internalType": "string",
                         "name": "hashID",
                         "type": "string"
-                      },
-                      {
-                        "internalType": "address",
-                        "name": "userAddress",
-                        "type": "address"
-                      },
-                      {
-                        "internalType": "uint256",
-                        "name": "timeStamp",
-                        "type": "uint256"
                       }
                     ],
                     "name": "storeHash",
-                    "outputs": [],
+                    "outputs": [
+                      {
+                        "internalType": "bytes32",
+                        "name": "",
+                        "type": "bytes32"
+                      }
+                    ],
                     "stateMutability": "nonpayable",
                     "type": "function"
                   },
                   {
                     "inputs": [
                       {
-                        "internalType": "string",
-                        "name": "hashID",
-                        "type": "string"
+                        "internalType": "bytes32",
+                        "name": "uniqueID",
+                        "type": "bytes32"
                       }
                     ],
                     "name": "getHashDetails",
@@ -195,9 +209,9 @@
                   {
                     "inputs": [
                       {
-                        "internalType": "string",
+                        "internalType": "bytes32",
                         "name": "",
-                        "type": "string"
+                        "type": "bytes32"
                       }
                     ],
                     "name": "hashRecords",
@@ -220,8 +234,21 @@
                     ],
                     "stateMutability": "view",
                     "type": "function"
+                  },
+                  {
+                    "inputs": [],
+                    "name": "idCounter",
+                    "outputs": [
+                      {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                      }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
                   }
-                ];
+                ]
             
                 const contract = new web3.eth.Contract(contractABI, contractAddress);
             
