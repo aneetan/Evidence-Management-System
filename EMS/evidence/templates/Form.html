@@ -125,11 +125,17 @@
                 const timestamp = Math.floor(Date.now() / 1000);
             
                 // Send transaction to the blockchain
-                const contractAddress = '0xb7d08f5195e27a44253931389acb0f97b4457748'; 
+                const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d'; 
                 const contractABI = [
                   {
                     "anonymous": false,
                     "inputs": [
+                      {
+                        "indexed": false,
+                        "internalType": "bytes32",
+                        "name": "uniqueID",
+                        "type": "bytes32"
+                      },
                       {
                         "indexed": false,
                         "internalType": "string",
@@ -158,29 +164,25 @@
                         "internalType": "string",
                         "name": "hashID",
                         "type": "string"
-                      },
-                      {
-                        "internalType": "address",
-                        "name": "userAddress",
-                        "type": "address"
-                      },
-                      {
-                        "internalType": "uint256",
-                        "name": "timeStamp",
-                        "type": "uint256"
                       }
                     ],
                     "name": "storeHash",
-                    "outputs": [],
+                    "outputs": [
+                      {
+                        "internalType": "bytes32",
+                        "name": "",
+                        "type": "bytes32"
+                      }
+                    ],
                     "stateMutability": "nonpayable",
                     "type": "function"
                   },
                   {
                     "inputs": [
                       {
-                        "internalType": "string",
-                        "name": "hashID",
-                        "type": "string"
+                        "internalType": "bytes32",
+                        "name": "uniqueID",
+                        "type": "bytes32"
                       }
                     ],
                     "name": "getHashDetails",
@@ -207,9 +209,9 @@
                   {
                     "inputs": [
                       {
-                        "internalType": "string",
+                        "internalType": "bytes32",
                         "name": "",
-                        "type": "string"
+                        "type": "bytes32"
                       }
                     ],
                     "name": "hashRecords",
@@ -232,8 +234,21 @@
                     ],
                     "stateMutability": "view",
                     "type": "function"
+                  },
+                  {
+                    "inputs": [],
+                    "name": "idCounter",
+                    "outputs": [
+                      {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                      }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
                   }
-                ];
+                ]
             
                 const contract = new web3.eth.Contract(contractABI, contractAddress);
             
