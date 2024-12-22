@@ -1,4 +1,8 @@
 myenv/
 .env
 *.pyc
+<<<<<<< HEAD
 __pycache__/
+=======
+__pycache__/
+>>>>>>> 62c5a1ab2d1fab1ee9159d0c1965316aa6a5b0e8
