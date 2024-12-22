@@ -18,13 +18,6 @@ contract IPFXStorage {
 
         require(hashRecords[hashID].timeStamp == 0, "Hash already exists");
 
-        // Create an Evidence struct
-        HashRecord memory newEvidence = HashRecord({
-            hashID: hashID,
-            userAddress: msg.sender,
-            timestamp: block.timestamp
-        });
-
         // Add the hash record to the blockchain
         hashRecords[hashID] = HashRecord(hashID, userAddress, timeStamp);
 
