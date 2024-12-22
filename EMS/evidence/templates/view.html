@@ -23,25 +23,17 @@
     <!-- Example Card 1 -->
     <div class="evidence-card">
       <div class="card-content">
-        <h2>Ram Parsad</h2>
-        <p><strong>Crime Name:</strong> Financial Fraud</p>
-        <p><strong>Nationality:</strong> Nepali</p>
-        <p><strong>National ID Card Number:</strong> 0000000000</p>
-        <p><strong>Description:</strong> Ram Parsad was involved in a financial fraud scheme causing significant losses to multiple companies.</p>
-        <p><strong>Date and Time of Evidence:</strong> 2024-12-18 14:30</p>
+         
       </div>
     </div>
   </div>
   {% include 'footer.html' %}
 
   <script>
-
-    // Import Web3.js
-const Web3 = require('web3');
+ 
 
 const web3 = new Web3(window.ethereum); 
 
-// Your contract's ABI and address (replace with actual values)
 const contractABI =  [
   {
     "anonymous": false,
@@ -164,7 +156,7 @@ const contractABI =  [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
 
 const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d';  // Replace with your deployed contract address
 
@@ -183,13 +175,42 @@ async function getIPFSHash(hashID) {
         const ipfsHash = result[0];
         console.log("IPFS Hash: ", ipfsHash);
 
+        await sendHashToPython(ipfsHash);
+
         return ipfsHash;
     } catch (error) {
         console.error("Error retrieving IPFS hash:", error);
     }
 }
 
-/ Handle the search button click
+// Function to send the IPFS hash to the Python backend
+async function sendHashToPython(ipfsHash) {
+  try {
+      const response = await fetch('http://127.0.0.1:8000/process_ipfs/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ipfsHash: ipfsHash }),
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          console.log('Response from Python backend:', data);
+
+          const crimeData = data.crime_data;
+          const evidenceFiles = data.evidence_files;
+
+          updateUI(crimeData, evidenceFiles);
+      } else {
+          console.error('Error sending data to Python backend:', response.statusText);
+      }
+  } catch (error) {
+      console.error('Error sending IPFS hash to Python:', error);
+  }
+}
+
+// Handle the search button click
 document.getElementById('search-btn').addEventListener('click', async () => {
     const hashID = document.getElementById('search-bar').value;
     
@@ -197,16 +218,33 @@ document.getElementById('search-btn').addEventListener('click', async () => {
         alert("Please enter a Hash ID");
         return;
     }
-
     // Get evidence data from the contract and IPFS
     const evidence = await getIPFSHash(hashID);
 
-    console.log(evidence);
+    await sendHashToPython(hashID);
 });
 
 
-  
-  
+// Function to update the UI with crime data and evidence files
+function updateUI(crimeData, evidenceFiles) {
+  // Update crime data fields
+  const evidenceContainer = document.getElementById('evidenceContainer');
+  evidenceContainer.innerHTML = `
+    <div class="evidence-card">
+      <div class="card-content">
+        <h2>${crimeData.name}</h2>
+        <p><strong>Crime Name:</strong> ${crimeData.crime}</p>
+        <p><strong>Nationality:</strong> ${crimeData.nationality}</p>
+        <p><strong>National ID Card Number:</strong> ${crimeData.nationalId}</p>
+        <p><strong>Description:</strong> ${crimeData.description}</p>
+        <p>Evidence Files:</p>
+        <ul>
+          ${evidenceFiles.map(file => `<li><a href="https://gateway.pinata.cloud/ipfs/${file}" target="_blank">${file}</a></li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+}
   </script>
 
   
