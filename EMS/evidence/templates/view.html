@@ -23,12 +23,7 @@
     <!-- Example Card 1 -->
     <div class="evidence-card">
       <div class="card-content">
-        <h2>Ram Parsad</h2>
-        <p><strong>Crime Name:</strong> Financial Fraud</p>
-        <p><strong>Nationality:</strong> Nepali</p>
-        <p><strong>National ID Card Number:</strong> 0000000000</p>
-        <p><strong>Description:</strong> Ram Parsad was involved in a financial fraud scheme causing significant losses to multiple companies.</p>
-        <p><strong>Date and Time of Evidence:</strong> 2024-12-18 14:30</p>
+         
       </div>
     </div>
   </div>
@@ -202,6 +197,11 @@ async function sendHashToPython(ipfsHash) {
       if (response.ok) {
           const data = await response.json();
           console.log('Response from Python backend:', data);
+
+          const crimeData = data.crime_data;
+          const evidenceFiles = data.evidence_files;
+
+          updateUI(crimeData, evidenceFiles);
       } else {
           console.error('Error sending data to Python backend:', response.statusText);
       }
@@ -218,12 +218,33 @@ document.getElementById('search-btn').addEventListener('click', async () => {
         alert("Please enter a Hash ID");
         return;
     }
-
     // Get evidence data from the contract and IPFS
     const evidence = await getIPFSHash(hashID);
 
-    console.log(evidence);
+    await sendHashToPython(hashID);
 });
+
+
+// Function to update the UI with crime data and evidence files
+function updateUI(crimeData, evidenceFiles) {
+  // Update crime data fields
+  const evidenceContainer = document.getElementById('evidenceContainer');
+  evidenceContainer.innerHTML = `
+    <div class="evidence-card">
+      <div class="card-content">
+        <h2>${crimeData.name}</h2>
+        <p><strong>Crime Name:</strong> ${crimeData.crime}</p>
+        <p><strong>Nationality:</strong> ${crimeData.nationality}</p>
+        <p><strong>National ID Card Number:</strong> ${crimeData.nationalId}</p>
+        <p><strong>Description:</strong> ${crimeData.description}</p>
+        <p>Evidence Files:</p>
+        <ul>
+          ${evidenceFiles.map(file => `<li><a href="https://gateway.pinata.cloud/ipfs/${file}" target="_blank">${file}</a></li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+}
   </script>
 
   

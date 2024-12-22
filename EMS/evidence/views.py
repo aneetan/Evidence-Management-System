@@ -36,8 +36,27 @@ CONTRACT_ABI = [
     }
 ]
 
+
+
 web3 = Web3(Web3.HTTPProvider(WEB3_PROVIDER))
 # contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
+
+# Function to retrieve data from Pinata using IPFS hash
+def get_data_from_ipfs(ipfs_hash):
+    headers = {
+        'Authorization': f"Bearer {settings.PINATA_JWT_TOKEN}",
+    }
+    url = f'https://gateway.pinata.cloud/ipfs/{ipfs_hash}'  
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json()  
+        else:
+            print(f"Failed to retrieve data: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching IPFS data: {e}")
+        return None
 
 def home(request):
     return render(request, 'index.html')
@@ -107,24 +126,39 @@ def save_to_ipfs(request):
             }) 
 
     return render(request, "Form.html")
-#0xc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b
 
 @csrf_exempt   
 def process_ipfs(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)  # Get the JSON data from the request
-            ipfs_hash = data.get('ipfsHash') 
+            data = json.loads(request.body)  
+            ipfs_hash = data.get('ipfsHash')
             
-             
-            print(f"Received IPFS Hash: {ipfs_hash}")
+            ipfs_data = get_data_from_ipfs(ipfs_hash)
+            print(ipfs_data)
+
+            if ipfs_data:
+                crime_data = {
+                    'name': ipfs_data.get('name', ''),
+                    'crime': ipfs_data.get('crime', ''),
+                    'nationality': ipfs_data.get('nationality', ''),
+                    'nationalId': ipfs_data.get('nationalId', ''),
+                    'description': ipfs_data.get('description', ''),
+                }
+                # Extract evidence files from the IPFS data
+                evidence_files = ipfs_data.get('evidence_files', [])
+
+                # Render the template with crime data and evidence files
+                return JsonResponse({
+                    'crime_data': crime_data,
+                    'evidence_files': evidence_files
+                })
             
-             
-            return JsonResponse({
-                "status": "success",
-                "message": "IPFS hash processed successfully.",
-                "hash": ipfs_hash
-            })
+            else:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Failed to fetch data from IPFS."
+                }, status=400)
 
         except Exception as e:
             print(f"Error: {e}")
