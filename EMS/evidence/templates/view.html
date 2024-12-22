@@ -35,13 +35,10 @@
   {% include 'footer.html' %}
 
   <script>
-
-    // Import Web3.js
-const Web3 = require('web3');
+ 
 
 const web3 = new Web3(window.ethereum); 
 
-// Your contract's ABI and address (replace with actual values)
 const contractABI =  [
   {
     "anonymous": false,
@@ -164,7 +161,7 @@ const contractABI =  [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
 
 const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d';  // Replace with your deployed contract address
 
@@ -183,13 +180,37 @@ async function getIPFSHash(hashID) {
         const ipfsHash = result[0];
         console.log("IPFS Hash: ", ipfsHash);
 
+        await sendHashToPython(ipfsHash);
+
         return ipfsHash;
     } catch (error) {
         console.error("Error retrieving IPFS hash:", error);
     }
 }
 
-/ Handle the search button click
+// Function to send the IPFS hash to the Python backend
+async function sendHashToPython(ipfsHash) {
+  try {
+      const response = await fetch('http://127.0.0.1:8000/process_ipfs/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ipfsHash: ipfsHash }),
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          console.log('Response from Python backend:', data);
+      } else {
+          console.error('Error sending data to Python backend:', response.statusText);
+      }
+  } catch (error) {
+      console.error('Error sending IPFS hash to Python:', error);
+  }
+}
+
+// Handle the search button click
 document.getElementById('search-btn').addEventListener('click', async () => {
     const hashID = document.getElementById('search-bar').value;
     
@@ -203,10 +224,6 @@ document.getElementById('search-btn').addEventListener('click', async () => {
 
     console.log(evidence);
 });
-
-
-  
-  
   </script>
 
   

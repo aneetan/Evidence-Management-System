@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -106,9 +107,33 @@ def save_to_ipfs(request):
             }) 
 
     return render(request, "Form.html")
+#0xc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b
 
+@csrf_exempt   
+def process_ipfs(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Get the JSON data from the request
+            ipfs_hash = data.get('ipfsHash') 
+            
+             
+            print(f"Received IPFS Hash: {ipfs_hash}")
+            
+             
+            return JsonResponse({
+                "status": "success",
+                "message": "IPFS hash processed successfully.",
+                "hash": ipfs_hash
+            })
 
-# def verify_transaction(request):
-#     # Get the transaction hash from the frontend (MetaMask)
-#     transaction_hash = request.POST.get('transaction_hash')
-#     return transaction_hash
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({
+                "status": "error",
+                "message": "Failed to process IPFS hash."
+            }, status=400)
+    else:
+        return JsonResponse({
+            "status": "error",
+            "message": "Only POST method is allowed."
+        }, status=405)
