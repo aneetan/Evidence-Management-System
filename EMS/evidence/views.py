@@ -47,6 +47,7 @@ def add(request):
 def view(request):
     return render(request, 'view.html')
 
+
 @csrf_exempt
 def save_to_ipfs(request):
     if request.method == "POST":
