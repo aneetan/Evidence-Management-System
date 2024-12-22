@@ -79,16 +79,28 @@
       alert('MetaMask is not installed!');
     }
 
-    // Connect to MetaMask
-    document.getElementById('connectButton').addEventListener('click', async () => {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        document.getElementById('submitButton').disabled = false;
-        alert('MetaMask connected!');
-      } catch (error) {
-        console.error('Error connecting to MetaMask:', error);
+    // Check if the wallet is already connected on page load
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          
+          // If there is at least one account, enable the submit button
+          if (accounts.length > 0) {
+            document.getElementById('submitButton').disabled = false;
+            alert('MetaMask is already connected!');
+          } else {
+            alert('MetaMask is not connected. Please connect your wallet.');
+          }
+        } catch (error) {
+          console.error('Error checking accounts:', error);
+        }
+      } else {
+        console.error('MetaMask is not installed');
       }
     });
+
+
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault(); 

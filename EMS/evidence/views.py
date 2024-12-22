@@ -55,6 +55,18 @@ def save_to_ipfs(request):
         wallet_address = form_data.get("wallet_address")
         files = request.FILES.getlist('evidence')
 
+        upload_dir = os.path.join(settings.BASE_DIR, 'uploaded_files') 
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+        
+        for file in files:
+            file_path = os.path.join(upload_dir, file.name)
+            
+            # Save the file locally
+            with open(file_path, 'wb') as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
+
         # Process uploaded files (optional)
         evidence_data = []
         for file in files:
