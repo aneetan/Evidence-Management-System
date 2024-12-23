@@ -68,6 +68,12 @@ def view(request):
     return render(request, 'view.html')
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import os
+import requests
+from django.conf import settings
+
 @csrf_exempt
 def save_to_ipfs(request):
     if request.method == "POST":
@@ -75,22 +81,43 @@ def save_to_ipfs(request):
         form_data = request.POST.dict()
         files = request.FILES.getlist('evidence')
 
-        upload_dir = os.path.join(settings.BASE_DIR, 'media') 
+        upload_dir = os.path.join(settings.BASE_DIR, 'media')
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
-        
+
+        evidence_data = []
         for file in files:
             file_path = os.path.join(upload_dir, file.name)
-            
+
             # Save the file locally
             with open(file_path, 'wb') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
 
-        # Process uploaded files (optional)
-        evidence_data = []
-        for file in files:
-            evidence_data.append(file.name)
+            # Upload the file to IPFS using Pinata
+            try:
+                with open(file_path, 'rb') as f:
+                    url = "https://api.pinata.cloud/pinning/pinFileToIPFS"
+                    headers = {
+                        "Authorization": f"Bearer {settings.PINATA_JWT_TOKEN}",
+                    }
+                    files_data = {"file": (file.name, f)}
+                    response = requests.post(url, files=files_data, headers=headers)
+
+                    if response.status_code == 200:
+                        ipfs_hash = response.json()["IpfsHash"]
+                        evidence_data.append({
+                            "file_name": file.name,
+                            "ipfs_hash": ipfs_hash,
+                        })
+                    else:
+                        return render(request, "Form.html", {
+                            "alert_message": f"Failed to upload {file.name}: {response.text}"
+                        })
+            except Exception as e:
+                return render(request, "Form.html", {
+                    "alert_message": f"An error occurred with file {file.name}: {str(e)}"
+                })
 
         # Combine form data and evidence information
         data_to_save = {
@@ -102,7 +129,7 @@ def save_to_ipfs(request):
             "evidence_files": evidence_data,
         }
 
-        # Save data to IPFS using Pinata
+        # Save the consolidated data to IPFS
         try:
             url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
             headers = {
@@ -113,18 +140,18 @@ def save_to_ipfs(request):
 
             if response.status_code == 200:
                 ipfs_hash = response.json()["IpfsHash"]
-                return JsonResponse({'ipfs_hash': ipfs_hash})
-            
+                return JsonResponse({'ipfs_hash': ipfs_hash, 'evidence_data': evidence_data})
             else:
                 return render(request, "Form.html", {
-                    "alert_message": f"Failed to save evidence: {response.text}"
+                    "alert_message": f"Failed to save evidence data: {response.text}"
                 })
         except Exception as e:
             return render(request, "Form.html", {
-                "alert_message": f"An error occurred: {str(e)}"
-            }) 
+                "alert_message": f"An error occurred while saving evidence data: {str(e)}"
+            })
 
     return render(request, "Form.html")
+
 
 @csrf_exempt   
 def process_ipfs(request):
