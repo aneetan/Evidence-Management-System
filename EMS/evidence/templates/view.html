@@ -163,7 +163,7 @@ const contractABI =  [
   }
 ];
 
-const contractAddress = '0x1b94433e9ec8b33328d8b6a42334c3586b33257d';  // Replace with your deployed contract address
+const contractAddress = '0xb94d32c002241ecaa06d2a17067833d192b01703';  // Replace with your deployed contract address
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -235,7 +235,13 @@ function displayEvidenceData(evidenceData) {
               <p><strong>Description:</strong> ${evidenceData.description}</p>
               <p>Evidence Files:</p>
               <ul>
-                  ${evidenceData.evidence_files.map(file => `<li><a href="C:/Users/Acer/Desktop/EMS/Evidence-Management-System/EMS/evidence/uploaded_files/${file}" target="_blank">${file}</a></li>`).join('')}
+                   ${evidenceData.evidence_files.map(file => `
+                        <li>
+                            <a href="https://gateway.pinata.cloud/ipfs/${file.ipfs_hash}" target="_blank">
+                                ${file.file_name}
+                            </a>
+                        </li>
+                    `).join('')}
               </ul>
           </div>
       </div>
