@@ -7,6 +7,116 @@
   <link rel="stylesheet" href="{% static 'evidence/css/View.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 </head>
+<style>
+  /* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fa;
+  margin: 0;
+  padding: 30;
+}
+
+.container {
+  padding: 20px;
+}
+
+.heading-container {
+  text-align: center;
+  margin-top: 100px;
+  color: #2C74B3;
+}
+
+.heading-container h1 {
+  font-weight: bold;
+  color: #2C74B3;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+}
+
+/* Search Box Styles */
+.search-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+#search-bar {
+  padding: 10px;
+  width: 50%;
+  font-size: 1.2em;
+  border-radius: 5px;
+  border: 2px solid #d8e1ea;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: #2C74B3;
+  color: white;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.search-btn:hover {
+  background-color: #1c5b91;
+}
+
+/* Evidence Card Container */
+.evidence-container {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.evidence-card {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  display: inline-block;
+  width: 60%;
+  margin-bottom: 100px;
+}
+
+.card-content {
+  text-align: left;
+}
+
+.card-content h2 {
+  color: #2C74B3;
+  font-size: 1.8em;
+}
+
+.card-content p {
+  font-size: 1.1em;
+  margin: 10px 0;
+}
+
+.card-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.card-content ul li {
+  margin-bottom: 10px;
+}
+
+.card-content ul li a {
+  color: #2C74B3;
+  text-decoration: none;
+}
+
+.card-content ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Header Container */
+.header-container {
+  text-align: center;
+  margin-bottom: 40px;
+}
+</style>
 <body>
   {% include 'nav.html' %}
 
