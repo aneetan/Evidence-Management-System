@@ -7,19 +7,19 @@
   <link rel="stylesheet" href="{% static 'evidence/css/View.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 </head>
-<style>
- 
-</style>
 <body>
   {% include 'nav.html' %}
 
-
+  <!-- Heading Container -->
+  <div class="heading-container">
+    <h1>View Evidence</h1>
+  </div>
   <!-- Search Container -->
-  <div style="margin-top:100px;" class="search-container">
+  <div class="search-container">
 
     <form id="search-form" method="POST" >
       {% csrf_token %}
-      <input type="text" id="search-bar" name="hash_id" placeholder="Enter Hash ID to find related case evidence" />
+      <input type="text" id="search-bar" name="hash_id" placeholder="Enter Hash ID" />
       <button type="submit" class="search-btn" id="search-btn">Search</button>
   </form>
   
@@ -166,7 +166,7 @@ const contractABI =  [
   }
 ];
 
-const contractAddress = '0x0822a7a2c58634de8d74da7b9a275c5a4faccbf3';  // Replace with your deployed contract address
+const contractAddress = '0x18c1e1b3caf7e059244d4b2fd6620c0e13743d9c';  // Replace with your deployed contract address
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
