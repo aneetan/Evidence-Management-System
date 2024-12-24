@@ -1,6 +1,7 @@
 myenv/
 .env
 *.pyc
+media/
 <<<<<<< HEAD
 __pycache__/
 =======
