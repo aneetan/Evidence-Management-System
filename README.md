@@ -54,5 +54,5 @@ ProofChain is a decentralized, web-based Evidence Management System (EMS) design
 6. Access the application in your browser at http://127.0.0.1:8000/ 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](pictures/Screenshot 2025-01-14 221158.png)
 
