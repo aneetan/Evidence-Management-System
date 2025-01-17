@@ -70,8 +70,6 @@ ProofChain is a decentralized, web-based Evidence Management System (EMS) design
 
 ![App Screenshot](pictures/s8.png)
 
-![App Screenshot](pictures/s9.png)
-
 ![App Screenshot](pictures/s100.png)
 
 
