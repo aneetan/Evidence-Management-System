@@ -44,7 +44,7 @@ ProofChain is a decentralized, web-based Evidence Management System (EMS) design
 ```bash
  python manage.py runserver
 ```
-6. Access the application in your browser at http://127.0.0.1:8000/ 
+6. Access the application in your local browser. 
 ## Screenshots
 **Landing Page**
 ![App Screenshot](pictures/Screenshot%202025-01-14%20221158.png)
