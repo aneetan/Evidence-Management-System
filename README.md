@@ -7,20 +7,13 @@ ProofChain is a decentralized, web-based Evidence Management System (EMS) design
 ## Features
 * **User Authentication and Authorization:** Users log in using MetaMask wallet for secure access and role-based access control.
 * **Evidence Submission:** Admins add evidence by submitting criminal data, metadata, and files through the "Add Evidence" page.
-* **Transaction Signing via MetaMask:** Evidence submissions and data transactions are securely signed through MetaMask.
 * **Evidence Retrieval:** Users search and view stored evidence by entering the unique hash ID on the "View Evidence" page.
-* **Role-Based Access Control:** Admins can add evidence, while general users can only view evidence.
-* **Immutable Data Storage:** Once added, evidence cannot be altered, ensuring the integrity and authenticity of data.
-* **Blockchain Integration:** Evidence is securely stored on the blockchain with a unique hash ID for verification.
-* **Unique Hash ID Generation:** Each piece of evidence is assigned a unique hash ID for secure retrieval and reference.
 ## Tech Stack
-**Frontend:** HTML, CSS, Bootstrap, JavaScript, Web3.js
+**Frontend:** HTML, CSS, Bootstrap, JavaScript
 
 **Backend:** Python, Django
 
 **Blockchain & Storage:** Ethereum, InterPlanetary File System (IPFS), MetaMask
-
-**Database:** PostgreSQL
 
 **Development Tools:** Ganache, Truffle, Metamask
 ## Get Started
@@ -55,20 +48,10 @@ ProofChain is a decentralized, web-based Evidence Management System (EMS) design
 ## Screenshots
 **Landing Page**
 ![App Screenshot](pictures/Screenshot%202025-01-14%20221158.png)
-**Login using MetaMask**
-![App Screenshot](pictures/s2.png)
-
-![App Screenshot](pictures/s3.png)
 **Add Evidence**
-![App Screenshot](pictures/s4.png)
-
 ![App Screenshot](pictures/s5.png)
 
 ![App Screenshot](pictures/s6.png)
-**Signing Transaction**
-![App Screenshot](pictures/s7.png)
-**Generating Hash ID**
-![App Screenshot](pictures/s8.png)
 **View Evidence**
 ![App Screenshot](pictures/s100.png)
 
